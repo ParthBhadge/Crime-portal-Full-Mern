@@ -31,15 +31,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/form" element={<Form />} />
+      <Route path="/form" element={<ProtectedRoute><Form /></ProtectedRoute>} />
         <Route path="/web4" element={<Web4 />} />
         <Route path="/" element={<Welcome />} />
-        <Route path="/type" element={<Type />} />
+        <Route path="/type" element={<ProtectedRoute><Type /></ProtectedRoute>} />
         <Route path="/thankyou" element={<ThankYou />} />
         {/* <Route path="/status" element={<Status />} /> */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/safety" element={<Safety />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/new" element={<New />} />
         <Route path="/login" element={<Login />} />
         <Route path="/emergency" element={<Emergency />} />

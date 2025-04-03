@@ -23,6 +23,14 @@ header {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: fadeInDown 1s ease-out;
 }
+.container-status {
+
+  height: 1000px;
+}
+.space
+{
+  margin-top: 150px;
+}
 
 nav {
   display: flex;
@@ -30,6 +38,7 @@ nav {
   align-items: center;
   padding: 0 2rem;
 }
+
 
 nav .logo {
   font-size: 2rem;
@@ -181,6 +190,48 @@ body.dark-theme footer {
   /* height: 100vh; */
   
   
+}
+/* Complaints Table */
+.complaints-table {
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+.complaints-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.complaints-table th, .complaints-table td {
+  padding: 1rem;
+  border: 1px solid #ddd;
+}
+
+.complaints-table th {
+  background-color: #006699;
+  color: #fff;
+}
+
+.complaints-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.complaints-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.complaints-table .status {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.complaints-table .status.pending {
+  color: #ff9800;
+}
+
+.complaints-table .status.completed {
+  color: #4caf50;
 }
 
 /* Footer */

@@ -25,33 +25,40 @@ const Form = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form Data:', formData); // Log the form data for debugging
+
     try {
+      const token = localStorage.getItem('token'); // Retrieve the token from localStorage
       const response = await fetch('/api/complaints', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
         body: JSON.stringify(formData),
       });
 
+      console.log('Response Status:', response.status); // Log the response status
+      console.log('Response Headers:', response.headers); // Log the response headers
+
+      // Check if the response has a body
+      if (!response.ok) {
+        const errorText = await response.text(); // Read the response as text
+        throw new Error(errorText || 'An error occurred while submitting the complaint.');
+      }
+
       const result = await response.json();
+      console.log('Response Data:', result); // Log the response data
+
       if (response.ok) {
-        alert(result.message);
-        setFormData({
-          name: '',
-          email: '',
-          mobile: '',
-          address: '',
-          complaintType: '',
-          gender: '',
-          state: '',
-          complaint: '',
-        }); // Reset form
-        navigate('/thankyou'); // Navigate to the thank you page
+        alert('Complaint submitted successfully'); // Show success message
+        navigate('/profile'); // Redirect to profile page
       } else {
-        alert('Error: ' + result.error);
+        alert(result.error || 'Failed to submit complaint.'); // Show error message
       }
     } catch (error) {
       console.error('Error submitting complaint:', error);
-      alert('Failed to submit complaint. Please try again.');
+      alert('An error occurred while submitting the complaint. Please try again later.');
     }
   };
 

@@ -22,12 +22,7 @@ const Signup = () => {
 
   // Function to validate captcha
   const validateCaptcha = () => {
-    if (userInput === captcha) {
-      alert('Signup successful!');
-    } else {
-      alert('Invalid captcha. Please try again.');
-      generateCaptcha();
-    }
+    return userInput === captcha;
   };
 
   // Function to validate password
@@ -42,8 +37,9 @@ const Signup = () => {
   };
 
   // Function to clear the form
-  const clearForm = () => {
-    document.querySelectorAll('input').forEach((input) => (input.value = ''));
+  const clearForm = (e) => {
+    e.preventDefault();
+    setFormData({ name: '', email: '', password: '' });
     setPassword('');
     setUserInput('');
   };
@@ -66,8 +62,19 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validatePassword(password)) {
+      alert('Password does not meet requirements.');
+      return;
+    }
+
+    if (!validateCaptcha()) {
+      alert('Invalid captcha. Please try again.');
+      generateCaptcha();
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -75,7 +82,7 @@ const Signup = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert(result.message);
+        alert(result.message || 'Signup successful!');
         navigate('/login');
       } else {
         alert('Error: ' + result.error);
@@ -166,18 +173,7 @@ const Signup = () => {
             {captcha}
           </div>
         </div>
-        <button
-          type="submit"
-          onClick={() => {
-            if (validatePassword(password)) {
-              validateCaptcha();
-            } else {
-              alert('Password does not meet requirements.');
-            }
-          }}
-        >
-          Signup
-        </button>
+        <button type="submit">Signup</button>
         <button className="cancel" onClick={clearForm}>
           Cancel
         </button>

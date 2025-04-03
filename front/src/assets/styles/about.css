@@ -9,6 +9,9 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+.imgt{
+  height: 10px;
+}
 
 /* Dark Theme Styles */
 body.dark-theme {

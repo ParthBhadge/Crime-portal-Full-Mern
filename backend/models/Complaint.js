@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const ComplaintSchema = new mongoose.Schema({
+const complaintSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the user
   name: { type: String, required: true },
   email: { type: String, required: true },
   mobile: { type: String, required: true },
@@ -9,8 +10,8 @@ const ComplaintSchema = new mongoose.Schema({
   gender: { type: String, required: true },
   state: { type: String, required: true },
   complaint: { type: String, required: true },
-  date: { type: Date, default: Date.now },
-  status: { type: String, default: 'Pending' },
+  status: { type: String, default: 'Pending' }, // Default status
+  createdAt: { type: Date, default: Date.now }, // Timestamp
 });
 
-module.exports = mongoose.model('Complaint', ComplaintSchema);
+module.exports = mongoose.model('Complaint', complaintSchema);

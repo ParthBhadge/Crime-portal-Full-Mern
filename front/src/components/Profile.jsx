@@ -1,25 +1,108 @@
 import React, { useState, useEffect } from 'react';
-import '../assets/styles/profile.css'; // Import the CSS file
 import { Link, useNavigate } from 'react-router-dom';
+import '../assets/styles/profile.css';
+
 const Profile = () => {
+  const [user, setUser] = useState(null);
+  const [complaints, setComplaints] = useState([]);
   const [profilePic, setProfilePic] = useState('');
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const navigate = useNavigate();
+
+  // Fetch user profile and complaints
+  useEffect(() => {
+    const fetchProfileAndComplaints = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        // Fetch user profile
+        const profileResponse = await fetch('/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const profileResult = await profileResponse.json();
+        if (profileResponse.ok) {
+          setUser(profileResult);
+          setProfilePic(profileResult.profilePic || ''); // Load profile picture from backend
+        } else {
+          alert('Error: ' + profileResult.error);
+          navigate('/login');
+        }
+
+        // Fetch user complaints
+        const complaintsResponse = await fetch('/api/complaints', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const complaintsResult = await complaintsResponse.json();
+        if (complaintsResponse.ok) {
+          setComplaints(complaintsResult);
+        } else {
+          alert('Error: ' + complaintsResult.error);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        navigate('/login');
+      }
+    };
+
+    fetchProfileAndComplaints();
+  }, [navigate]);
 
   // Handle profile picture upload
-  const handleProfilePictureUpload = (event) => {
+  const handleProfilePictureUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfilePic(e.target.result);
+      reader.onload = async (e) => {
+        const base64Image = e.target.result;
+        setProfilePic(base64Image);
+
+        // Save the profile picture to the backend
+        const token = localStorage.getItem('token');
+        try {
+          const response = await fetch('/api/auth/profile-pic', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ profilePic: base64Image }),
+          });
+
+          if (!response.ok) {
+            alert('Failed to save profile picture.');
+          }
+        } catch (error) {
+          console.error('Error saving profile picture:', error);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
   // Remove profile picture
-  const removeProfilePicture = () => {
+  const removeProfilePicture = async () => {
     setProfilePic('');
+
+    // Remove the profile picture from the backend
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch('/api/auth/profile-pic', {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        alert('Failed to remove profile picture.');
+      }
+    } catch (error) {
+      console.error('Error removing profile picture:', error);
+    }
   };
 
   // Toggle theme
@@ -27,6 +110,12 @@ const Profile = () => {
     setIsDarkTheme(!isDarkTheme);
     document.body.classList.toggle('dark-theme');
     localStorage.setItem('dark-theme', !isDarkTheme);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove the token
+    alert('You have been logged out.');
+    navigate('/login'); // Redirect to the login page
   };
 
   // Check for saved theme preference on mount
@@ -39,28 +128,28 @@ const Profile = () => {
   }, []);
 
   return (
-    <div>
-      {/* Navigation Bar */}
+    <div className="profile-container">
       <header className="gradient-bg shadow-lg">
         <nav>
           <a href="#" className="logo">Crime Portal</a>
           <ul>
             <li><Link to="/home">Home</Link></li>
             <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/admin">Admin</Link></li>
             <li>
               <button className="theme-toggle" onClick={toggleTheme}>🌓</button>
             </li>
             <li>
-            <Link to="/profile">Profile</Link>
+              <button className="logout-button" onClick={handleLogout}>Logout</button>
             </li>
           </ul>
         </nav>
       </header>
-      <div className='empty'></div>
-      
-      {/* Profile Page Content */}
+      <div className='space'></div>
+
       <div className="container">
-        <h2>Profile</h2>
+        <h2>Welcome, {user?.name}</h2>
+        <p>Email: {user?.email}</p>
 
         {/* Profile Image with Camera Icon */}
         <div
@@ -102,43 +191,36 @@ const Profile = () => {
           />
         </div>
 
-        {/* Profile Actions (Edit Profile and Change Password) */}
-        <div className="profile-actions">
-          <button onClick={() => alert('Edit Profile feature is not implemented yet.')}>
-            Edit Profile
-          </button>
-          <button onClick={() => alert('Change Password feature is not implemented yet.')}>
-            Change Password
-          </button>
-        </div>
+        <div className='container-status'>
 
-        {/* Profile Details */}
-        <div className="profile-details">
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" value="your_username" readOnly />
-
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" value="your_email@example.com" readOnly />
-
-          <label htmlFor="dob">Date of Birth:</label>
-          <input type="text" id="dob" name="dob" value="22/08/2000" readOnly />
-
-          <label htmlFor="mobile">Mobile Number:</label>
-          <input type="tel" id="mobile" name="mobile" value="9876543210" readOnly />
-
-          <label htmlFor="address">Address:</label>
-          <textarea
-            id="address"
-            name="address"
-            rows="4"
-            readOnly
-          >
-            Mumbai
-          </textarea>
+        <h3>Your Complaints</h3>
+        <div className="complaints-table">
+          <table>
+          <thead>
+            <tr>
+              <th>Complaint Type</th>
+              <th>Description</th>
+              <th>Status</th> {/* Fixed unclosed tag */}
+              <th>Date</th>
+              </tr>
+              </thead>
+            <tbody>
+              {complaints.map((complaint) => (
+                <tr key={complaint._id}>
+                  <td>{complaint.complaintType}</td>
+                  <td>{complaint.complaint}</td>
+                  <td className={`status ${complaint.status.toLowerCase()}`}>
+                    {complaint.status}
+                  </td>
+                  <td>{new Date(complaint.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
+              </div>
 
-      {/* Footer */}
       <footer className="gradient-bg shadow-lg">
         <p>&copy; 2023 Crime Portal. All rights reserved.</p>
         <ul>

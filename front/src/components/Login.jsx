@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/styles/login.css'; // Import the CSS file
+import '../assets/styles/login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -18,18 +18,23 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
+  
+      // Check if the response has a body
+      if (response.headers.get('content-length') === '0') {
+        throw new Error('Empty response from server');
+      }
+  
       const result = await response.json();
       if (response.ok) {
-        localStorage.setItem('token', result.token);
-        alert(result.message);
-        navigate('/profile');
+        localStorage.setItem('token', result.token); // Store the token
+        alert('Login successful'); // Show success message
+        navigate('/profile'); // Redirect to profile page
       } else {
-        alert('Error: ' + result.error);
+        alert(result.error || 'Login failed. Please check your credentials.'); // Show error message
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      alert('Failed to log in. Please try again.');
+      alert('An error occurred while logging in. Please try again later.');
     }
   };
 
@@ -55,8 +60,9 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-      <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
-      <Link to="/signup" className="forgot-password">Signup</Link>
+      <p>
+        Don't have an account? <a href="/signup">Signup</a>
+      </p>
     </div>
   );
 };

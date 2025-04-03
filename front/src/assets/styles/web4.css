@@ -333,6 +333,7 @@ body.dark-theme footer {
   animation: fadeIn 2.5s ease-out;
 }
 
+
 .testimonial-container {
   display: grid;
   grid-template-rows: repeat(2, 1fr);

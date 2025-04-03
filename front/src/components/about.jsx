@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import '../assets/styles/about.css'; // Import the CSS file
+import Parth from '../assets/Parth3.jpg'; // Import the image for Parth
+import Chetna from '../assets/Chetna.jpg'; // Import the image for Chetna
+import Prena from '../assets/Prena.jpg'; // Import the image for Prena
+import Akash from '../assets/Akash.jpg'; // Import the image for Akash
+import Rishi from '../assets/Rishi.jpg'; // Import the image for Rishi
 
 
 
@@ -56,25 +61,19 @@ const About = () => {
             <div className="creators-grid">
               {/* Creator 1: Akash Gupta */}
               <div className="creator-card">
-                <img src="https://via.placeholder.com/150" alt="Akash Gupta" />
-                <h3>Akash Gupta</h3>
-                <p>Frontend Developer</p>
-              </div>
-              {/* Creator 2: Rishi Raj */}
-              <div className="creator-card">
-                <img src="https://via.placeholder.com/150" alt="Rishi Raj" />
-                <h3>Rishi Raj</h3>
-                <p>Backend Developer</p>
+                <img src={Akash} alt="Akash Gupta" />
+                <h3>Akash </h3>
+                <p>Developer</p>
               </div>
               {/* Creator 3: Chetna */}
               <div className="creator-card">
-                <img src="https://via.placeholder.com/150" alt="Chetna" />
+                <img src={Chetna} alt="Chetna" />
                 <h3>Chetna</h3>
-                <p>UI/UX Designer</p>
+                <p>Developer</p>
               </div>
               {/* Creator 4: Parth */}
               <div className="creator-card">
-                <img src="https://via.placeholder.com/150" alt="Parth" />
+                <img className='imgt' src={Parth} alt="Parth" />
 
                 <h3>Parth</h3>
                 <p>Developer</p>
@@ -82,10 +81,19 @@ const About = () => {
               </div>
               {/* Creator 5: Pratiskha */}
               <div className="creator-card">
-                <img src="https://via.placeholder.com/150" alt="Pratiskha" />
+                <img src={Prena} alt="Pratiskha" />
                 <h3>Pratiskha</h3>
                 <p>Developer</p>
               </div>
+              {/* Creator 2: Rishi Raj */}
+              <div className="creator-card">
+                <img className='imgt' src={Rishi} alt="Parth" />
+
+                <h3>Rishiraj</h3>
+                <p>Developer</p>
+                
+              </div>
+            
             </div>
           </div>
         </div>
